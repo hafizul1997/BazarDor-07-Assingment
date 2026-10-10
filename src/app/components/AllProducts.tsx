@@ -7,7 +7,7 @@ interface Props {
 
 const AllProducts = ({ products }: Props) => {
   return (
-    <section className="mx-auto container px-4 py-8">
+    <section className="mx-auto container px-4 py-8 pb-20">
       <h2 className="mb-5 text-2xl font-bold text-gray-900">
         সব পণ্য
       </h2>

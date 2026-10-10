@@ -42,8 +42,8 @@ const HomePage = async () => {
   );
 
   return (
-    <main>
-      <div>   
+    <main className="bg-[#F0F5F0]">
+     
       <HeroSection />
 
       <PriceUp products={increased} />
@@ -51,7 +51,8 @@ const HomePage = async () => {
       <PriceDown products={decreased} />
 
       <AllProducts products={products} />
-      </div>
+       {/* Divider between main and footer */}
+      <hr className="border-t border-gray-200" />
     </main>
   );
 };
