@@ -1,6 +1,7 @@
 
 import React from "react";
 import type { Product } from "../page";
+import Link from "next/link";
 interface ProductCardProps {
   product: Product;
 }
@@ -31,6 +32,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
       : "bg-gray-100";
 
   return (
+    <Link
+  href={`/product/${product.id}`}
+  className="text-green-700 hover:underline"
+>   
     <article
       className={`rounded-xl border border-gray-200 bg-white p-3 shadow-sm transition-all duration-200 hover:shadow-md ${
         isUp
@@ -82,6 +87,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
       </div>
     </article>
+    </Link>
   );
 };
 
