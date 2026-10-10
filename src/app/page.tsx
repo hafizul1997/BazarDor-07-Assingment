@@ -1,25 +1,58 @@
 
-import HeroSection from './components/HeroSection';
-import PriceUp from './components/Priceup';
+import HeroSection from "./components/HeroSection";
+import PriceUp from "./components/Priceup";
+import PriceDown from "./components/PriceDown";
+import AllProducts from "./components/AllProducts";
 
-const HomePage = () => {
+export interface Product {
+  id: number | string;
+  slug: string;
+  nameBn: string;
+  categoryNameBn?: string;
+  categoryIcon?: string;
+  image?: string;
+  unit: string;
+  today: number;
+  yesterday: number;
+  lastWeek?: number;
+  lastMonth?: number;
+  change: {
+    dir: "up" | "down" | "same";
+    pct: number;
+  };
+}
+const HomePage = async () => {
+  const res = await fetch(
+    "https://api.abcz.workers.dev/api/bazardor/products",
+    { next: { revalidate: 300 } }
+  );
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch products");
+  }
+
+  const products: Product[] = await res.json();
+
+  const increased = products.filter(
+    (product) => product.today > product.yesterday
+  );
+
+  const decreased = products.filter(
+    (product) => product.today < product.yesterday
+  );
+
   return (
-    <div>
+    <main>
       <div>   
-          <HeroSection />
-      </div>
-       <div>
-           
-           <PriceUp />
-       </div>
+      <HeroSection />
 
-       <div>
-           <h1>আজ দাম কমেছে</h1>
-       </div>
-          <div>
-                <h1>সব পণ্য</h1>
-          </div>
-    </div>
+      <PriceUp products={increased} />
+
+      <PriceDown products={decreased} />
+
+      <AllProducts products={products} />
+      </div>
+    </main>
   );
 };
 
