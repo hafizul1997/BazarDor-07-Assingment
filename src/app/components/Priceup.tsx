@@ -15,7 +15,7 @@ const PriceUp = ({ products }: Props) => {
       {products.length === 0 ? (
         <p className="text-gray-500">দাম বাড়েনি এমন কোনো পণ্য নেই।</p>
       ) : (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

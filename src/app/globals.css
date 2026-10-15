@@ -9,4 +9,10 @@
   }
 }
 
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 90s linear infinite;
+  will-change: transform;
+}
 

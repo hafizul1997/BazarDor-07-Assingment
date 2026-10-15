@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛒 বাজার দর | BazarDor
 
-## Getting Started
+**বাজার দর (BazarDor)** is a Bengali-language web application that helps users explore daily market prices of essential products in Bangladesh. It provides product information, category-based browsing, and price comparisons in a clean and user-friendly interface.
 
-First, run the development server:
+## ✨ Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **📊 Daily Market Prices** — Explore the latest available prices of essential market products.
+- **📈 Price Change Tracking** — Identify products whose prices have increased or decreased.
+- **🗂️ Category-Based Browsing** — Find products by categories such as rice, lentils, vegetables, fish, meat, eggs, and spices.
+- **🔎 Product Price Comparison** — View current and previous prices, units, and percentage changes.
+- **📱 Responsive User Interface** — Browse market information through a clean interface designed for desktop and mobile screens.
+
+## 🛠️ Technologies Used
+
+- **Next.js** — React framework for building the application.
+- **React** — Component-based user interface development.
+- **TypeScript** — Type-safe application development.
+- **Tailwind CSS** — Responsive styling and layout.
+- **DaisyUI** — UI components and styling utilities.
+- **Programming Hero BazarDor API** — Market product and pricing data.
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js
+- npm
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone YOUR_REPOSITORY_URL
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd bazar_dor_07
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+   If you run the application on another port, such as `3001`, open that port instead.
+
+## 📡 Data Source
+
+Market product data is retrieved from the Programming Hero BazarDor API.
+
+```text
+https://openapi.programming-hero.com/api/bazardor/products
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 Project Goal
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The goal of BazarDor is to make market price information easier to explore and understand for Bengali-speaking users through a simple, accessible, and responsive web application.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 👨‍💻 Developer
 
-## Learn More
+Developed as a web development project using modern frontend technologies.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**বাজার দর — আপনার বাজার, আপনার হিসাব।**
