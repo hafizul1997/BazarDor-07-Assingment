@@ -1,6 +1,4 @@
 @import "tailwindcss";
-@plugin "daisyui";
-
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -11,7 +9,4 @@
   }
 }
 
-@theme {
-  --animate-marquee: marquee 70s linear infinite;
-}
 
