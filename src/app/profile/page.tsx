@@ -5,6 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 
 export default function ProfilePage() {
@@ -17,10 +18,31 @@ export default function ProfilePage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
-  // Use session values until the user edits the form.
   const currentName = name ?? user?.name ?? "";
   const currentImage = image ?? user?.image ?? "";
+
+  async function handleLogout() {
+    setLoggingOut(true);
+    setError("");
+
+    try {
+      const result = await authClient.signOut();
+
+      if (result.error) {
+        setError(result.error.message || "লগআউট করা যায়নি।");
+        setLoggingOut(false);
+        return;
+      }
+
+      router.replace("/");
+      router.refresh();
+    } catch {
+      setError("লগআউট করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      setLoggingOut(false);
+    }
+  }
 
   if (isPending) {
     return <p className="p-10 text-center">প্রোফাইল লোড হচ্ছে...</p>;
@@ -43,9 +65,7 @@ export default function ProfilePage() {
     );
   }
 
-  async function handleSubmit(
-    e: React.FormEvent<HTMLFormElement>
-  ) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
     setMessage("");
@@ -82,18 +102,16 @@ export default function ProfilePage() {
 
       if (result.error) {
         setError(
-          result.error.message || "প্রোফাইল update করা যায়নি।"
+          result.error.message || "প্রোফাইল update করা যায়নি।"
         );
         return;
       }
 
-      setMessage("আপনার প্রোফাইল update হয়েছে।");
-
-      // Refresh session data after a successful update.
+      setMessage("আপনার প্রোফাইল update হয়েছে।");
       await authClient.getSession();
       router.refresh();
     } catch {
-      setError("সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      setError("সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {
       setSaving(false);
     }
@@ -114,28 +132,45 @@ export default function ProfilePage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-4">
-          {currentImage ? (
-            <Image
-              src={currentImage}
-              alt="Profile"
-              width={64}
-              height={64}
-              unoptimized
-              className="h-16 w-16 rounded-full border object-cover"
-            />
-          ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#05893E] text-2xl font-bold text-white">
-              {currentName.trim().charAt(0).toUpperCase() || "U"}
-            </div>
-          )}
+        {/* Profile details + Sign Out button */}
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-4">
+            {currentImage ? (
+              <Image
+                src={currentImage}
+                alt="Profile"
+                width={64}
+                height={64}
+                unoptimized
+                className="h-16 w-16 shrink-0 rounded-full border object-cover"
+              />
+            ) : (
+              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#05893E] text-2xl font-bold text-white">
+                {currentName.trim().charAt(0).toUpperCase() || "U"}
+              </div>
+            )}
 
-          <div className="min-w-0">
-            <p className="truncate font-semibold">{user.name}</p>
-            <p className="truncate text-sm text-gray-500">
-              {user.email}
-            </p>
+            <div className="min-w-0">
+              <p className="truncate font-semibold">{user.name}</p>
+              <p className="break-all text-sm text-gray-500">
+                {user.email}
+              </p>
+            </div>
           </div>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            disabled={loggingOut}
+            aria-label="Sign out"
+            title="Sign out"
+            className="flex shrink-0 items-center gap-2 rounded-lg border border-red-200 px-3 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <LogOut size={18} />
+            <span className="hidden sm:inline">
+              {loggingOut ? "Signing out..." : "Sign Out"}
+            </span>
+          </button>
         </div>
 
         {error && (
