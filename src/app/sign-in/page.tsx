@@ -1,5 +1,5 @@
 "use client";
-
+import toast from "react-hot-toast";
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -17,52 +17,70 @@ export default function SignInPage() {
   const isBusy = loading || Boolean(socialLoading);
 
   const handleSubmit = async (
-    e: React.FormEvent<HTMLFormElement>
-  ) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
+  e: React.FormEvent<HTMLFormElement>
+) => {
+  e.preventDefault();
+  setError("");
+  setLoading(true);
 
-    try {
-      const { error: signInError } = await authClient.signIn.email({
-        email: email.trim(),
-        password,
-      });
+  try {
+    const { error: signInError } = await authClient.signIn.email({
+      email: email.trim(),
+      password,
+    });
 
-      if (signInError) {
-        setError(
-          signInError.message || "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।"
-        );
-        return;
-      }
+    if (signInError) {
+      const message =
+        signInError.message || "ইমেইল অথবা পাসওয়ার্ড সঠিক নয়।";
 
-      router.replace("/");
-      router.refresh();
-    } catch {
-      setError("সাইন ইন করা যায়নি। আবার চেষ্টা করুন।");
-    } finally {
-      setLoading(false);
+      setError(message);
+      toast.error(message);
+      return;
     }
-  };
 
+    toast.success("সফলভাবে সাইন ইন হয়েছে!");
+
+    router.replace("/");
+    router.refresh();
+  } catch {
+    const message = "সাইন ইন করা যায়নি। আবার চেষ্টা করুন।";
+
+    setError(message);
+    toast.error(message);
+  } finally {
+    setLoading(false);
+  }
+};
   const handleSocialSignIn = async (
-    provider: "google" | "github"
-  ) => {
-    setError("");
-    setSocialLoading(provider);
+  provider: "google" | "github"
+) => {
+  setError("");
+  setSocialLoading(provider);
 
-    try {
-      await authClient.signIn.social({
-        provider,
-        callbackURL: "/",
-      });
-    } catch {
-      setError(
-        `${provider === "google" ? "Google" : "GitHub"} দিয়ে সাইন ইন করা যায়নি। OAuth সেটিংস চেক করুন।`
-      );
+  try {
+    const { error: signInError } = await authClient.signIn.social({
+      provider,
+      callbackURL: "/",
+    });
+
+    if (signInError) {
+      const message =
+        signInError.message ||
+        `${provider === "google" ? "Google" : "GitHub"} দিয়ে সাইন ইন করা যায়নি।`;
+
+      setError(message);
+      toast.error(message);
       setSocialLoading("");
     }
-  };
+  } catch {
+    const message =
+      `${provider === "google" ? "Google" : "GitHub"} দিয়ে সাইন ইন করা যায়নি। OAuth সেটিংস চেক করুন।`;
+
+    setError(message);
+    toast.error(message);
+    setSocialLoading("");
+  }
+};
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">

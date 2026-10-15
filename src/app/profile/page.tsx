@@ -1,6 +1,6 @@
 
 "use client";
-
+import toast from "react-hot-toast";
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -24,26 +24,35 @@ export default function ProfilePage() {
   const currentImage = image ?? user?.image ?? "";
 
   async function handleLogout() {
-    setLoggingOut(true);
-    setError("");
+  setLoggingOut(true);
+  setError("");
 
-    try {
-      const result = await authClient.signOut();
+  try {
+    const result = await authClient.signOut();
 
-      if (result.error) {
-        setError(result.error.message || "লগআউট করা যায়নি।");
-        setLoggingOut(false);
-        return;
-      }
+    if (result.error) {
+      const errorMessage =
+        result.error.message || "লগআউট করা যায়নি।";
 
-      router.replace("/");
-      router.refresh();
-    } catch {
-      setError("লগআউট করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।");
-      setLoggingOut(false);
+      setError(errorMessage);
+      toast.error(errorMessage);
+      return;
     }
-  }
 
+    toast.success("সফলভাবে লগআউট হয়েছে!");
+
+    router.replace("/");
+    router.refresh();
+  } catch {
+    const errorMessage =
+      "লগআউট করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+
+    setError(errorMessage);
+    toast.error(errorMessage);
+  } finally {
+    setLoggingOut(false);
+  }
+}
   if (isPending) {
     return <p className="p-10 text-center">প্রোফাইল লোড হচ্ছে...</p>;
   }
@@ -100,16 +109,20 @@ export default function ProfilePage() {
         image: trimmedImage || "",
       });
 
-      if (result.error) {
-        setError(
-          result.error.message || "প্রোফাইল update করা যায়নি।"
-        );
-        return;
-      }
+    if (result.error) {
+  const errorMessage =
+    result.error.message || "প্রোফাইল update করা যায়নি।";
+
+  setError(errorMessage);
+  toast.error(errorMessage);
+  return;
+}
 
       setMessage("আপনার প্রোফাইল update হয়েছে।");
-      await authClient.getSession();
-      router.refresh();
+     toast.success("প্রোফাইল সফলভাবে আপডেট হয়েছে!");
+
+await authClient.getSession();
+router.refresh();
     } catch {
       setError("সমস্যা হয়েছে। আবার চেষ্টা করুন।");
     } finally {

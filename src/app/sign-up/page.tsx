@@ -1,8 +1,10 @@
 "use client";
+
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 export default function SignUp() {
   const router = useRouter();
@@ -17,6 +19,8 @@ export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [socialLoading, setSocialLoading] = useState("");
 
+  const isBusy = loading || Boolean(socialLoading);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm((prev) => ({
       ...prev,
@@ -28,8 +32,17 @@ export default function SignUp() {
     e.preventDefault();
     setError("");
 
+    if (!form.name.trim()) {
+      const message = "আপনার নাম লিখুন।";
+      setError(message);
+      toast.error(message);
+      return;
+    }
+
     if (form.password.length < 8) {
-      setError("পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।");
+      const message = "পাসওয়ার্ড কমপক্ষে ৮ অক্ষরের হতে হবে।";
+      setError(message);
+      toast.error(message);
       return;
     }
 
@@ -43,14 +56,23 @@ export default function SignUp() {
       });
 
       if (signUpError) {
-        setError(signUpError.message || "অ্যাকাউন্ট তৈরি করা যায়নি।");
+        const message =
+          signUpError.message || "অ্যাকাউন্ট তৈরি করা যায়নি।";
+
+        setError(message);
+        toast.error(message);
         return;
       }
+
+      toast.success("অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!");
 
       router.replace("/");
       router.refresh();
     } catch {
-      setError("সমস্যা হয়েছে। আবার চেষ্টা করুন।");
+      const message = "সাইন আপ করা যায়নি। আবার চেষ্টা করুন.";
+
+      setError(message);
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -63,19 +85,29 @@ export default function SignUp() {
     setSocialLoading(provider);
 
     try {
-      await authClient.signIn.social({
+      const { error: socialError } = await authClient.signIn.social({
         provider,
         callbackURL: "/",
       });
+
+      if (socialError) {
+        const message =
+          socialError.message ||
+          `${provider === "google" ? "Google" : "GitHub"} দিয়ে সাইন আপ করা যায়নি।`;
+
+        setError(message);
+        toast.error(message);
+        setSocialLoading("");
+      }
     } catch {
-      setError(
-        `${provider === "google" ? "Google" : "GitHub"} দিয়ে সাইন আপ করা যায়নি। OAuth সেটিংস চেক করুন।`
-      );
+      const message =
+        `${provider === "google" ? "Google" : "GitHub"} দিয়ে সাইন আপ করা যায়নি। OAuth সেটিংস চেক করুন।`;
+
+      setError(message);
+      toast.error(message);
       setSocialLoading("");
     }
   };
-
-  const isBusy = loading || Boolean(socialLoading);
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-10">
@@ -188,67 +220,69 @@ export default function SignUp() {
           <span className="text-sm text-gray-500">অথবা</span>
           <div className="h-px flex-1 bg-gray-200" />
         </div>
-{/* Social Sign Up Buttons */}
-<div className="grid grid-cols-2 gap-3">
-  {/* Google Sign Up */}
-  <button
-    type="button"
-    onClick={() => handleSocialSignIn("google")}
-    disabled={loading || Boolean(socialLoading)}
-    className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
-  >
-    <svg
-      className="h-5 w-5 shrink-0"
-      viewBox="0 0 48 48"
-      aria-hidden="true"
-    >
-      <path
-        fill="#EA4335"
-        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"
-        transform="translate(0 4)"
-      />
-      <path
-        fill="#4285F4"
-        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.74 7.18l7.68 5.96c4.48-4.14 7.1-10.23 7.1-17.61Z"
-      />
-      <path
-        fill="#FBBC05"
-        d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19Z"
-        transform="translate(1 0)"
-      />
-      <path
-        fill="#34A853"
-        d="M24 48c6.48 0 11.93-2.13 15.9-5.79l-7.68-5.96c-2.13 1.43-4.85 2.28-8.22 2.28-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
-      />
-    </svg>
 
-    <span>
-      {socialLoading === "google" ? "অপেক্ষা করুন..." : "Google"}
-    </span>
-  </button>
+        {/* Social Sign Up Buttons */}
+        <div className="grid grid-cols-2 gap-3">
+          {/* Google */}
+          <button
+            type="button"
+            onClick={() => handleSocialSignIn("google")}
+            disabled={isBusy}
+            aria-label="Google দিয়ে সাইন আপ করুন"
+            className="flex min-w-0 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <svg
+              className="h-5 w-5 shrink-0"
+              viewBox="0 0 48 48"
+              aria-hidden="true"
+            >
+              <path
+                fill="#EA4335"
+                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5Z"
+                transform="translate(0 4)"
+              />
+              <path
+                fill="#4285F4"
+                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.74 7.18l7.68 5.96c4.48-4.14 7.1-10.23 7.1-17.61Z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M10.53 28.59A14.4 14.4 0 0 1 9.75 24c0-1.59.27-3.13.76-4.59l-7.98-6.19A23.9 23.9 0 0 0 0 24c0 3.87.93 7.52 2.56 10.78l7.97-6.19Z"
+                transform="translate(1 0)"
+              />
+              <path
+                fill="#34A853"
+                d="M24 48c6.48 0 11.93-2.13 15.9-5.79l-7.68-5.96c-2.13 1.43-4.85 2.28-8.22 2.28-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48Z"
+              />
+            </svg>
 
-  {/* GitHub Sign Up */}
-  <button
-    type="button"
-    onClick={() => handleSocialSignIn("github")}
-    disabled={loading || Boolean(socialLoading)}
-    className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
-  >
-    <svg
-      className="h-5 w-5 shrink-0"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      aria-hidden="true"
-    >
-      <path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.54v-2.1c-3.1.68-3.76-1.32-3.76-1.32-.5-1.29-1.23-1.63-1.23-1.63-1.01-.69.08-.68.08-.68 1.12.08 1.71 1.15 1.71 1.15.99 1.7 2.6 1.21 3.23.92.1-.72.39-1.21.7-1.49-2.47-.28-5.07-1.24-5.07-5.5 0-1.22.44-2.22 1.15-3-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.11-1.44 3.05-1.14 3.05-1.14.61 1.54.23 2.68.11 2.96.72.78 1.15 1.78 1.15 3 0 4.27-2.6 5.21-5.08 5.49.4.35.75 1.02.75 2.06v3.1c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z" />
-    </svg>
+            <span className="truncate">
+              {socialLoading === "google" ? "অপেক্ষা করুন..." : "Google"}
+            </span>
+          </button>
 
-    <span>
-      {socialLoading === "github" ? "অপেক্ষা করুন..." : "GitHub"}
-    </span>
-  </button>
-</div>
+          {/* GitHub */}
+          <button
+            type="button"
+            onClick={() => handleSocialSignIn("github")}
+            disabled={isBusy}
+            aria-label="GitHub দিয়ে সাইন আপ করুন"
+            className="flex min-w-0 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <svg
+              className="h-5 w-5 shrink-0"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path d="M12 .9a11.1 11.1 0 0 0-3.51 21.63c.55.1.76-.24.76-.54v-2.1c-3.1.68-3.76-1.32-3.76-1.32-.5-1.29-1.23-1.63-1.23-1.63-1.01-.69.08-.68.08-.68 1.12.08 1.71 1.15 1.71 1.15.99 1.7 2.6 1.21 3.23.92.1-.72.39-1.21.7-1.49-2.47-.28-5.07-1.24-5.07-5.5 0-1.22.44-2.22 1.15-3-.12-.28-.5-1.42.11-2.96 0 0 .94-.3 3.05 1.14a10.6 10.6 0 0 1 5.55 0c2.11-1.44 3.05-1.14 3.05-1.14.61 1.54.23 2.68.11 2.96.72.78 1.15 1.78 1.15 3 0 4.27-2.6 5.21-5.08 5.49.4.35.75 1.02.75 2.06v3.1c0 .3.2.65.77.54A11.1 11.1 0 0 0 12 .9Z" />
+            </svg>
 
+            <span className="truncate">
+              {socialLoading === "github" ? "অপেক্ষা করুন..." : "GitHub"}
+            </span>
+          </button>
+        </div>
 
         {/* Sign In */}
         <p className="mt-5 text-center text-sm text-gray-600">
