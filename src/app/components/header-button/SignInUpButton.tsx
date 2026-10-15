@@ -1,34 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 
 export default function SignInUpButton() {
-  const pathname = usePathname();
+  const { data: session, isPending } = authClient.useSession();
 
-  const isSignIn = pathname === "/sign-in";
-  const isSignUp = pathname === "/sign-up" || pathname === "/";
+  if (isPending || session?.user) {
+    return null;
+  }
 
   return (
-    <div className="flex gap-3">
+    <div className="flex items-center gap-2">
       <Link
         href="/sign-in"
-        className={`btn rounded-xl px-4 py-2 font-bold transition-all duration-200 ${
-          isSignIn
-            ? "bg-[#05893E] text-white shadow-md shadow-green-600"
-            : "bg-transparent text-gray-700 hover:bg-[#05893E] hover:text-white hover:shadow-md hover:shadow-green-600"
-        }`}
+        className="rounded-lg bg-[#05893E] px-3 py-2 text-sm font-semibold text-white transition hover:bg-green-700 sm:px-4"
       >
         সাইন ইন
       </Link>
 
       <Link
         href="/sign-up"
-        className={`btn rounded-xl px-4 py-2 font-bold transition-all duration-200 ${
-          isSignUp
-            ? "bg-[#05893E] text-white shadow-md shadow-green-600"
-            : "bg-transparent text-gray-700 hover:bg-[#05893E] hover:text-white hover:shadow-md hover:shadow-green-600"
-        }`}
+        className="rounded-lg border border-[#05893E] px-3 py-2 text-sm font-semibold text-[#05893E] transition hover:bg-green-50 sm:px-4"
       >
         সাইন আপ
       </Link>

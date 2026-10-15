@@ -1,4 +1,4 @@
-
+import { Suspense } from "react";
 import CategoryProductList from "@/app/components/CategoryProductList";
 
 interface Category {
@@ -26,6 +26,10 @@ interface Product {
     dir: "up" | "down" | "same";
     pct: number;
   };
+}
+
+interface PageProps {
+  params: Promise<{ CategoryId: string }>;
 }
 
 async function getCategories(): Promise<Category[]> {
@@ -66,11 +70,21 @@ async function getProducts(): Promise<Product[]> {
       : [];
 }
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: Promise<{ CategoryId: string }>;
-}) {
+export default function CategoryPage({ params }: PageProps) {
+  return (
+    <Suspense
+      fallback={
+        <main className="w-full px-4 py-8 sm:px-6 lg:px-8">
+          <p className="text-gray-600">ক্যাটাগরি লোড হচ্ছে...</p>
+        </main>
+      }
+    >
+      <CategoryPageContent params={params} />
+    </Suspense>
+  );
+}
+
+async function CategoryPageContent({ params }: PageProps) {
   const { CategoryId } = await params;
 
   const [categories, products] = await Promise.all([
@@ -111,28 +125,24 @@ export default async function CategoryPage({
 
   return (
     <main className="min-h-screen w-full px-4 py-6 sm:px-6 lg:px-8">
-      {/* Category Header */}
       <section className="w-full rounded-xl border border-gray-200 bg-white p-4 sm:p-5">
         <div className="flex items-center gap-4">
-          {/* Category Icon */}
           <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-gray-100 text-4xl sm:h-24 sm:w-24 sm:text-5xl">
             {category.icon || "🛒"}
           </div>
 
-          {/* Category Information */}
           <div>
             <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl">
               {category.nameBn}
             </h1>
 
             <p className="mt-2 text-sm text-gray-500">
-              মোট {categoryProducts.length} টি পণ্যেরে দাম ও পরিবর্তন
+              মোট {categoryProducts.length} টি পণ্যের দাম ও পরিবর্তন
             </p>
           </div>
         </div>
       </section>
 
-      {/* Sorting and Products */}
       <section className="mt-6 w-full">
         <CategoryProductList products={categoryProducts} />
       </section>

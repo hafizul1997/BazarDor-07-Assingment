@@ -1,26 +1,9 @@
-
 import HeroSection from "./components/HeroSection";
 import PriceUp from "./components/Priceup";
 import PriceDown from "./components/PriceDown";
 import AllProducts from "./components/AllProducts";
+import type { Product } from "@/types/product";
 
-export interface Product {
-  id: number | string;
-  slug: string;
-  nameBn: string;
-  categoryNameBn?: string;
-  categoryIcon?: string;
-  image?: string;
-  unit: string;
-  today: number;
-  yesterday: number;
-  lastWeek?: number;
-  lastMonth?: number;
-  change: {
-    dir: "up" | "down" | "same";
-    pct: number;
-  };
-}
 const HomePage = async () => {
   const res = await fetch(
     "https://openapi.programming-hero.com/api/bazardor/products",
@@ -43,15 +26,10 @@ const HomePage = async () => {
 
   return (
     <main className="bg-[#F0F5F0]">
-     
       <HeroSection />
-
       <PriceUp products={increased} />
-
       <PriceDown products={decreased} />
-
       <AllProducts products={products} />
-       {/* Divider between main and footer */}
       <hr className="border-t border-gray-200" />
     </main>
   );

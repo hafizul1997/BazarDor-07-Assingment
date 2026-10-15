@@ -1,9 +1,9 @@
 
 "use client";
 
+import type { Product } from "@/types/product";
 import { useMemo, useState } from "react";
 import ProductCard from "@/app/components/ProductCard";
-import type { Product } from "@/app/page";
 
 interface Props {
   products: Product[];
@@ -30,11 +30,16 @@ export default function CategoryProductList({ products }: Props) {
 
   return (
     <div className="w-full">
-      {/* Full-width Sorting Div */}
+      {/* Sorting Section */}
       <div className="mb-5 w-full rounded-xl border border-gray-200 bg-white p-4">
         <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          {/* Product Count */}
-          <p></p>
+          <p className="text-sm text-gray-500">
+            মোট{" "}
+            <span className="font-semibold text-gray-900">
+              {sortedProducts.length}
+            </span>{" "}
+            টি পণ্য
+          </p>
 
           {/* Sorting Dropdown */}
           <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
@@ -61,15 +66,8 @@ export default function CategoryProductList({ products }: Props) {
       </div>
 
       {/* Product Card Grid */}
-      <p className="text-sm text-gray-500 my-5">
-            মোট{" "}
-            <span className="font-semibold text-gray-900">
-              {sortedProducts.length}
-            </span>{" "}
-            টি পণ্যে দেখানো হচ্ছে
-          </p> 
       {sortedProducts.length > 0 ? (
-        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {sortedProducts.map((product) => (
             <ProductCard
               key={product.id}
