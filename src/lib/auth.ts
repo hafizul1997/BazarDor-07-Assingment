@@ -12,21 +12,30 @@ const client = new MongoClient(mongoUrl);
 const db = client.db();
 
 export const auth = betterAuth({
-   secret: process.env.BETTER_AUTH_SECRET,
+  baseURL: process.env.BETTER_AUTH_URL,
+  secret: process.env.BETTER_AUTH_SECRET,
+
   database: mongodbAdapter(db, { client }),
+
+  trustedOrigins: [
+    "https://bazar-dor-07.vercel.app",
+    "https://bazar-dor-07-758ek06gm-hafizul1.vercel.app",
+    "http://localhost:3000",
+    "http://localhost:3001",
+  ],
 
   emailAndPassword: {
     enabled: true,
   },
+
   socialProviders: {
-        google: { 
-            clientId: process.env.GOOGLE_CLIENT_ID as string, 
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
-        }, 
-         github: { 
-            clientId: process.env.GITHUB_CLIENT_ID as string, 
-            clientSecret: process.env.GITHUB_CLIENT_SECRET as string, 
-        }, 
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     },
-    
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    },
+  },
 });
