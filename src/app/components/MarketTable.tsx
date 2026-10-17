@@ -12,32 +12,56 @@ interface MarketTableProps {
 
 export default function MarketTable({ markets }: MarketTableProps) {
   return (
-    <div className="bg-white shadow rounded-lg p-6">
-      <h3 className="text-xl font-semibold mb-4">বাজারভিত্তিক বাজারদর নাম</h3>
+   <div className="w-full min-w-0 rounded-lg bg-white p-3 shadow sm:p-6">
+  <h3 className="mb-4 text-base font-semibold sm:text-xl">
+    বাজারভিত্তিক বাজারদর নাম
+  </h3>
 
-      <table className="w-full border-collapse">
-        <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="p-3 border">বাজার</th>
-            <th className="p-3 border">বিভাগ</th>
-            <th className="p-3 border">সর্বনিম্ন</th>
-            <th className="p-3 border">সর্বাধিক</th>
-            <th className="p-3 border">গড়</th>
+  <div className="w-full overflow-x-auto">
+    <table className="w-full min-w-[600px] border-collapse text-xs sm:text-sm md:text-base">
+      <thead>
+        <tr className="bg-gray-100 text-left">
+          <th className="whitespace-nowrap border p-2 sm:p-3">
+            বাজার
+          </th>
+          <th className="whitespace-nowrap border p-2 sm:p-3">
+            বিভাগ
+          </th>
+          <th className="whitespace-nowrap border p-2 sm:p-3">
+            সর্বনিম্ন
+          </th>
+          <th className="whitespace-nowrap border p-2 sm:p-3">
+            সর্বাধিক
+          </th>
+          <th className="whitespace-nowrap border p-2 sm:p-3">
+            গড়
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {markets.map((m, i) => (
+          <tr key={i} className="hover:bg-gray-50">
+            <td className="whitespace-nowrap border p-2 sm:p-3">
+              {m.market_name}
+            </td>
+            <td className="whitespace-nowrap border p-2 sm:p-3">
+              {m.division}
+            </td>
+            <td className="whitespace-nowrap border p-2 sm:p-3">
+              {m.lowest_price} টাকা
+            </td>
+            <td className="whitespace-nowrap border p-2 sm:p-3">
+              {m.highest_price} টাকা
+            </td>
+            <td className="whitespace-nowrap border p-2 sm:p-3">
+              {m.average_price} টাকা
+            </td>
           </tr>
-        </thead>
-
-        <tbody>
-          {markets.map((m, i) => (
-            <tr key={i} className="hover:bg-gray-50">
-              <td className="p-3 border">{m.market_name}</td>
-              <td className="p-3 border">{m.division}</td>
-              <td className="p-3 border">{m.lowest_price} টাকা</td>
-              <td className="p-3 border">{m.highest_price} টাকা</td>
-              <td className="p-3 border">{m.average_price} টাকা</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
   );
 }
